@@ -94,17 +94,16 @@ F.addEventListener('submit',async ev=>{
   try{
     const pw=document.getElementById('p').value;
     const html=await unlock(pw);
-    if(document.getElementById('r').checked)
-      localStorage.setItem('ok',JSON.stringify({p:pw,x:Date.now()+60*864e5}));
+    if(document.getElementById('r').checked) localStorage.setItem('ok',pw);
     render(html);
   }catch(_){ E.textContent='비밀번호가 맞지 않습니다'; B.disabled=false; B.textContent='열기';
     document.getElementById('p').select(); }
 });
 (async()=>{
-  const raw=localStorage.getItem('ok'); if(!raw) return;
-  let v=null; try{v=JSON.parse(raw);}catch(_){}
-  if(!v||!v.p||!v.x||Date.now()>v.x){localStorage.removeItem('ok');return;}
-  try{render(await unlock(v.p));}catch(_){localStorage.removeItem('ok');}
+  let v=localStorage.getItem('ok'); if(!v) return;
+  if(v[0]==='{'){try{v=JSON.parse(v).p;}catch(_){v=null;}}   // 옛 만료 형식 호환
+  if(!v){localStorage.removeItem('ok');return;}
+  try{render(await unlock(v));}catch(_){localStorage.removeItem('ok');}
 })();`;
 
   const hash = crypto.createHash('sha256').update(SCRIPT, 'utf8').digest('base64');
@@ -152,7 +151,7 @@ label{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:
   <form id="f"><input id="p" type="password" placeholder="비밀번호" autocomplete="off"
    autocapitalize="off" autocorrect="off" spellcheck="false" autofocus>
   <button id="b" type="submit">열기</button>
-  <label><input type="checkbox" id="r"> 이 기기에서 기억 (60일)</label></form>
+  <label><input type="checkbox" id="r"> 이 기기에서 기억</label></form>
   <div class="e" id="e"></div>
 </div>
 <script>${SCRIPT}</script></body></html>

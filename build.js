@@ -116,11 +116,14 @@ label{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:
 </div>
 <script>${SCRIPT}</script></body></html>
 `;
-  const txt = plain.toString('utf8');
-  for (let i = 0; i < 24; i++) {
-    const at = crypto.randomInt(0, Math.max(1, txt.length - 40));
-    const probe = txt.slice(at, at + 40);
-    if (probe.trim().length > 20 && out.includes(probe)) { console.error('평문 누출 감지'); process.exit(1); }
+  // 산출물에 평문 '본문'이 섞여 나갔는지 검사한다.
+  // 로더와 평문은 CSS·메타 같은 보일러플레이트를 공유하므로, 한글 본문만 표본으로 쓴다.
+  const runs = (plain.toString('utf8').match(/[가-힣][가-힣\s·]{15,}/g) || [])
+    .map(r => r.trim()).filter(r => r.length >= 16);
+  if (runs.length < 10) { console.error('검사 표본을 만들지 못했습니다'); process.exit(1); }
+  for (let i = 0; i < 30; i++) {
+    const probe = runs[crypto.randomInt(runs.length)];
+    if (out.includes(probe)) { console.error('평문 누출 감지: ' + probe.slice(0, 12) + '…'); process.exit(1); }
   }
   fs.writeFileSync('index.html.tmp', out);
   fs.renameSync('index.html.tmp', 'index.html');

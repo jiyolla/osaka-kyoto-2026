@@ -74,8 +74,13 @@ F.addEventListener('submit',async ev=>{
 <html lang="ko"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="${CSP}">
-<title>Private</title>
+<title>OSAKA &amp; KYOTO</title>
 <meta name="robots" content="noindex,nofollow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="OSAKA &amp; KYOTO">
+<meta property="og:description" content="비밀번호가 필요한 페이지입니다.">
+<meta property="og:image" content="https://jiyolla.github.io/osaka-kyoto-2026/og.png">
+<meta property="og:url" content="https://jiyolla.github.io/osaka-kyoto-2026/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="theme-color" content="#1c1917">

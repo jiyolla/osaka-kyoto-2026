@@ -85,11 +85,18 @@ function render(html){
       }
     }
   }
+  // 교체 전에 새 문서 쪽 아이콘을 먼저 정리해 둔다 (교체 순간 아이콘 공백을 없앤다)
+  var stamp='?v='+Date.now();
+  doc.querySelectorAll('link[rel="icon"],link[rel="apple-touch-icon"]').forEach(function(n){n.remove();});
+  var i1=doc.createElement('link'); i1.rel='icon'; i1.type='image/svg+xml'; i1.href='favicon.svg'+stamp;
+  var a1=doc.createElement('link'); a1.rel='apple-touch-icon'; a1.href='apple-touch-icon.png'+stamp;
+  doc.head.append(i1,a1);
   document.replaceChild(doc.documentElement,document.documentElement);
+  // 교체 후 한 번 더 갱신 — 일부 브라우저는 교체 시점 head 를 재평가하지 않는다
   document.querySelectorAll('link[rel="icon"],link[rel="apple-touch-icon"]').forEach(function(n){n.remove();});
-  var ic=document.createElement('link'); ic.rel='icon'; ic.type='image/svg+xml'; ic.href='favicon.svg';
-  var at=document.createElement('link'); at.rel='apple-touch-icon'; at.href='apple-touch-icon.png';
-  document.head.append(ic,at);
+  var i2=document.createElement('link'); i2.rel='icon'; i2.type='image/svg+xml'; i2.href='favicon.svg'+stamp;
+  var a2=document.createElement('link'); a2.rel='apple-touch-icon'; a2.href='apple-touch-icon.png'+stamp;
+  document.head.append(i2,a2);
   scrollTo(0,0);
 }
 const F=document.getElementById('f'),B=document.getElementById('b'),E=document.getElementById('e');

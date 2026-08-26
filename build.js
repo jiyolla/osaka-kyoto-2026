@@ -86,6 +86,10 @@ function render(html){
     }
   }
   document.replaceChild(doc.documentElement,document.documentElement);
+  document.querySelectorAll('link[rel="icon"],link[rel="apple-touch-icon"]').forEach(function(n){n.remove();});
+  var ic=document.createElement('link'); ic.rel='icon'; ic.type='image/svg+xml'; ic.href='favicon.svg';
+  var at=document.createElement('link'); at.rel='apple-touch-icon'; at.href='apple-touch-icon.png';
+  document.head.append(ic,at);
   scrollTo(0,0);
 }
 const F=document.getElementById('f'),B=document.getElementById('b'),E=document.getElementById('e');

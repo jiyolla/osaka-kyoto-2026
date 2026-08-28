@@ -1,3 +1,6 @@
 .DS_Store
 src/
 *.plain.html
+carto*.md
+carto.key
+*.key

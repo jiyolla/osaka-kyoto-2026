@@ -34,6 +34,15 @@ function askHidden(q) {              // stdin raw mode — 터미널에 문자�
   if (pw.length < 12) { console.error('비밀번호가 너무 짧습니다'); process.exit(1); }
 
   const plain = fs.readFileSync(SRC);
+  // 빌드마다 평문 스냅샷을 남긴다 (편집 사고 복구용, 최근 20개 유지)
+  try {
+    const bdir = require('path').join(require('path').dirname(SRC), 'backups');
+    fs.mkdirSync(bdir, { recursive: true, mode: 0o700 });
+    const stamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 15);
+    fs.writeFileSync(require('path').join(bdir, `index-${stamp}.html`), plain, { mode: 0o600 });
+    const old = fs.readdirSync(bdir).filter(f => f.startsWith('index-')).sort().slice(0, -20);
+    old.forEach(f => fs.unlinkSync(require('path').join(bdir, f)));
+  } catch (e) { console.warn('  백업 실패(계속 진행):', e.message); }
   const salt = crypto.randomBytes(16), iv = crypto.randomBytes(12);
   const key = crypto.pbkdf2Sync(pw, salt, ITER, 32, 'sha256');
   const c = crypto.createCipheriv('aes-256-gcm', key, iv, { authTagLength: 16 });

@@ -68,6 +68,7 @@ function askHidden(q) {              // stdin raw mode — 터미널에 문자�
   const SCRIPT = `
 const P=${P},ALLOW=${JSON.stringify(ALLOW)},
   DENY=['script','iframe','object','embed','base','form','input','button','textarea','select','frame','frameset','applet','portal'];
+const LK='ok'+location.pathname;   // 경로별 분리 — 같은 origin의 다른 여행 페이지와 안 섞이게
 const d=s=>Uint8Array.from(atob(s),x=>x.charCodeAt(0));
 async function unlock(pw){
   const km=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw.normalize('NFC')),'PBKDF2',false,['deriveKey']);
@@ -114,16 +115,16 @@ F.addEventListener('submit',async ev=>{
   try{
     const pw=document.getElementById('p').value;
     const html=await unlock(pw);
-    if(document.getElementById('r').checked) localStorage.setItem('ok',pw);
+    if(document.getElementById('r').checked) localStorage.setItem(LK,pw);
     render(html);
   }catch(_){ E.textContent='비밀번호가 맞지 않습니다'; B.disabled=false; B.textContent='열기';
     document.getElementById('p').select(); }
 });
 (async()=>{
-  let v=localStorage.getItem('ok'); if(!v) return;
+  let v=localStorage.getItem(LK); if(!v) return;
   if(v[0]==='{'){try{v=JSON.parse(v).p;}catch(_){v=null;}}   // 옛 만료 형식 호환
-  if(!v){localStorage.removeItem('ok');return;}
-  try{render(await unlock(v));}catch(_){localStorage.removeItem('ok');}
+  if(!v){localStorage.removeItem(LK);return;}
+  try{render(await unlock(v));}catch(_){localStorage.removeItem(LK);}
 })();`;
 
   const hash = crypto.createHash('sha256').update(SCRIPT, 'utf8').digest('base64');
